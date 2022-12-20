@@ -186,18 +186,50 @@ namespace GildedTros
                 var app = new GildedTros(items);
                 app.UpdateQuality();
             }
-        [Fact]
+            [Fact]
             public void Then_the_quality_should_be_updated()
             {
                 Assert.Equal(-1, _item.SellIn);
                 Assert.Equal(18, _item.Quality);
             }
         }
+
+        [Collection("IntegrationTest")]
+        public class When_updating_the_quality_of_a_smelly_item
         {
-            IList<Item> Items = new List<Item> { new Item { Name = "foo", SellIn = 0, Quality = 0 } };
-            GildedTros app = new GildedTros(Items);
-            app.UpdateQuality();
-            Assert.Equal("fixme", Items[0].Name);
+            private readonly Item _item;
+            public When_updating_the_quality_of_a_smelly_item()
+            {
+                _item = new Item { Name = "Duplicate Code", SellIn = 5, Quality = 20 };
+                IList<Item> items = new List<Item> { _item };
+                var app = new GildedTros(items);
+                app.UpdateQuality();
+            }
+            [Fact]
+            public void Then_the_quality_should_be_updated()
+            {
+                Assert.Equal(4, _item.SellIn);
+                Assert.Equal(18, _item.Quality);
+            }
+        }
+
+        [Collection("IntegrationTest")]
+        public class When_updating_the_quality_of_an_old_smelly_item
+        {
+            private readonly Item _item;
+            public When_updating_the_quality_of_an_old_smelly_item()
+            {
+                _item = new Item { Name = "Duplicate Code", SellIn = 0, Quality = 20 };
+                IList<Item> items = new List<Item> { _item };
+                var app = new GildedTros(items);
+                app.UpdateQuality();
+            }
+            [Fact]
+            public void Then_the_quality_should_be_updated()
+            {
+                Assert.Equal(-1, _item.SellIn);
+                Assert.Equal(16, _item.Quality);
+            }
         }
     }
 }

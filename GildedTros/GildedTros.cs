@@ -1,14 +1,15 @@
-﻿using GildedTros.App;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace GildedTros
 {
     public class GildedTros
     {
         private readonly IList<Item> _items;
+        private readonly IList<string> SmellyItemNames;
         public GildedTros(IList<Item> items)
         {
             _items = items;
+            SmellyItemNames = new List<string>() { "Duplicate Code", "Long Methods", "Ugly Variable Names" };
         }
 
         public void UpdateQuality()
@@ -26,6 +27,9 @@ namespace GildedTros
                         break;
                     case var s when item.Name.Contains("Backstage passes"):
                         UpdateBackstagePassesQuality(item);
+                        break;
+                    case var s when SmellyItemNames.Contains(item.Name):
+                        UpdateSmellyItemQuality(item);
                         break;
                     default:
                         UpdateNormalItemQuality(item);
@@ -71,6 +75,15 @@ namespace GildedTros
                 default:
                     item.Quality++;
                     break;
+            }
+        }
+
+        private static void UpdateSmellyItemQuality(Item item)
+        {
+            item.Quality -= 2;
+            if (item.SellIn < 0)
+            {
+                item.Quality -= 2;
             }
         }
 
