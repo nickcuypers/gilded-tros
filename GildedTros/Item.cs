@@ -1,4 +1,4 @@
-﻿namespace GildedTros.App
+﻿namespace GildedTros
 {
     public class Item
     {

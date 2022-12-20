@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace GildedTros.App
+namespace GildedTros
 {
     class Program
     {
