@@ -1,92 +1,88 @@
-﻿using System.Collections.Generic;
+﻿using GildedTros.App;
+using System.Collections.Generic;
 
-namespace GildedTros.App
+namespace GildedTros
 {
     public class GildedTros
     {
-        IList<Item> Items;
-        public GildedTros(IList<Item> Items)
+        private readonly IList<Item> _items;
+        public GildedTros(IList<Item> items)
         {
-            this.Items = Items;
+            _items = items;
         }
 
         public void UpdateQuality()
         {
-            for (var i = 0; i < Items.Count; i++)
+            foreach (var item in _items)
             {
-                if (Items[i].Name != "Good Wine" 
-                    && Items[i].Name != "Backstage passes for Re:factor"
-                    && Items[i].Name != "Backstage passes for HAXX")
-                {
-                    if (Items[i].Quality > 0)
-                    {
-                        if (Items[i].Name != "B-DAWG Keychain")
-                        {
-                            Items[i].Quality = Items[i].Quality - 1;
-                        }
-                    }
-                }
-                else
-                {
-                    if (Items[i].Quality < 50)
-                    {
-                        Items[i].Quality = Items[i].Quality + 1;
+                if (item.Name == "B-DAWG Keychain") continue;
 
-                        if (Items[i].Name == "Backstage passes for Re:factor"
-                        || Items[i].Name == "Backstage passes for HAXX")
-                        {
-                            if (Items[i].SellIn < 11)
-                            {
-                                if (Items[i].Quality < 50)
-                                {
-                                    Items[i].Quality = Items[i].Quality + 1;
-                                }
-                            }
+                item.SellIn--;
 
-                            if (Items[i].SellIn < 6)
-                            {
-                                if (Items[i].Quality < 50)
-                                {
-                                    Items[i].Quality = Items[i].Quality + 1;
-                                }
-                            }
-                        }
-                    }
+                switch (item.Name)
+                {
+                    case "Good Wine":
+                        UpdateWineQuality(item);
+                        break;
+                    case var s when item.Name.Contains("Backstage passes"):
+                        UpdateBackstagePassesQuality(item);
+                        break;
+                    default:
+                        UpdateNormalItemQuality(item);
+                        break;
                 }
 
-                if (Items[i].Name != "B-DAWG Keychain")
-                {
-                    Items[i].SellIn = Items[i].SellIn - 1;
-                }
+                NormalizeQuality(item);
+            }
+        }
 
-                if (Items[i].SellIn < 0)
-                {
-                    if (Items[i].Name != "Good Wine")
-                    {
-                        if (Items[i].Name != "Backstage passes for Re:factor"
-                            && Items[i].Name != "Backstage passes for HAXX")
-                        {
-                            if (Items[i].Quality > 0)
-                            {
-                                if (Items[i].Name != "B-DAWG Keychain")
-                                {
-                                    Items[i].Quality = Items[i].Quality - 1;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            Items[i].Quality = Items[i].Quality - Items[i].Quality;
-                        }
-                    }
-                    else
-                    {
-                        if (Items[i].Quality < 50)
-                        {
-                            Items[i].Quality = Items[i].Quality + 1;
-                        }
-                    }
-                }
+        private static void UpdateNormalItemQuality(Item item)
+        {
+            item.Quality--;
+            if (item.SellIn < 0)
+            {
+                item.Quality--;
+            }
+        }
+
+        private static void UpdateWineQuality(Item item)
+        {
+            item.Quality++;
+
+            if (item.SellIn < 0)
+            {
+                item.Quality++;
+            }
+        }
+
+        private static void UpdateBackstagePassesQuality(Item item)
+        {
+            switch (item.SellIn)
+            {
+                case < 0:
+                    item.Quality = 0;
+                    break;
+                case < 5:
+                    item.Quality += 3;
+                    break;
+                case < 10:
+                    item.Quality += 2;
+                    break;
+                default:
+                    item.Quality++;
+                    break;
+            }
+        }
+
+        private static void NormalizeQuality(Item item)
+        {
+            if (item.Quality > 50)
+            {
+                item.Quality = 50;
+            }
+            else if (item.Quality < 0)
+            {
+                item.Quality = 0;
             }
         }
     }
